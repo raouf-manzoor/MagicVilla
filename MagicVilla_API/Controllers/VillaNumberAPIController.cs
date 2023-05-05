@@ -44,7 +44,7 @@ namespace MagicVilla_API.Controllers
 
                 _logger.LogInformation("Getting all villas");
 
-                var villasList = await _villaNumberRepository.GetAllAsync();
+                var villasList = await _villaNumberRepository.GetAllAsync(includeProperties:"Villa");
 
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.IsSuccess = true;

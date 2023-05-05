@@ -6,7 +6,7 @@ using System.Linq.Expressions;
 
 namespace MagicVilla_API.Repository
 {
-    public class Repository<T>: IRepository<T> where T : class
+    public class Repository<T> : IRepository<T> where T : class
     {
         private readonly ApplicationDbContext _db;
         internal readonly DbSet<T> _dbSet;
@@ -18,22 +18,40 @@ namespace MagicVilla_API.Repository
         }
 
 
-        public async Task<List<T>> GetAllAsync(Expression<Func<T, bool>> filter = null)
+        public async Task<List<T>> GetAllAsync(Expression<Func<T, bool>> filter = null, string? includeProperties = null)
         {
 
-            var query = _dbSet;
+            IQueryable<T> query = _dbSet;
 
             if (filter != null)
-                query.Where(filter);
+                query = query.Where(filter);
+
+            if (!string.IsNullOrEmpty(includeProperties))
+            {
+                foreach (var property in
+                    includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(property);
+                }
+            }
 
             return await query.ToListAsync();
         }
-        public async Task<T> GetAsync(Expression<Func<T, bool>> filter = null, bool tracked = true)
+        public async Task<T> GetAsync(Expression<Func<T, bool>> filter = null, bool tracked = true, string? includeProperties = null)
         {
             var query = _dbSet.Where(filter);
 
             if (!tracked)
                 query = query.AsNoTracking();
+
+            if (!string.IsNullOrEmpty(includeProperties))
+            {
+                foreach (var property in
+                    includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query.Include(property);
+                }
+            }
 
             return await query.FirstOrDefaultAsync();
         }
@@ -43,7 +61,7 @@ namespace MagicVilla_API.Repository
             await _dbSet.AddAsync(entity);
             await SaveAsync();
         }
-      
+
         public async Task RemoveAsync(T entity)
         {
             _dbSet.Remove(entity);
