@@ -77,10 +77,12 @@ namespace MagicVilla_Web.Controllers
                 var response = await _villaNumberService.CreateAsync<APIResponse>(villaNumberInput.VillaNumber);
                 if (response != null && response.IsSuccess)
                 {
+                    TempData["success"] = "VillaNumber successfully created";
                     return RedirectToAction("Index");
                 }
                 else if (response.ErrorMessages?.Count > 0)
                 {
+                    TempData["error"] = "Error in VillaNumber Creation";
                     ModelState.AddModelError("CustomError", response.ErrorMessages.FirstOrDefault());
                 }
             }
