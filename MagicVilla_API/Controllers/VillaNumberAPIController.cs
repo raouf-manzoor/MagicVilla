@@ -104,13 +104,13 @@ namespace MagicVilla_API.Controllers
             {
                 if (await _villaNumberRepository.GetAsync(e => e.VillaNo == villaNumberCreateDTO.VillaNo) != null)
                 {
-                    ModelState.AddModelError("CustomError", "Villa Number already exists");
+                    ModelState.AddModelError("ErrorMessages", "Villa Number already exists");
                     return BadRequest(ModelState);
                 }
 
                 if (await _villaRepository.GetAsync(e => e.Id == villaNumberCreateDTO.VillaId) == null)
                 {
-                    ModelState.AddModelError("CustomError", "Invalid VillaId!");
+                    ModelState.AddModelError("ErrorMessages", "Invalid VillaId!");
                     return BadRequest(ModelState);
                 }
 
@@ -133,8 +133,9 @@ namespace MagicVilla_API.Controllers
             {
                 _response.IsSuccess = false;
                 _response.ErrorMessages = new List<string>() { ex.ToString() };
-                return _response;
+                //return _response;
             }
+            return _response;
         }
 
         [HttpDelete("{villaNo:int}", Name = "DeleteVillaNumber")]
@@ -187,7 +188,7 @@ namespace MagicVilla_API.Controllers
 
                 if (await _villaRepository.GetAsync(e => e.Id == villaNumberUpdateDTO.VillaId) == null)
                 {
-                    ModelState.AddModelError("CustomError", "Invalid VillaId!");
+                    ModelState.AddModelError("ErrorMessages", "Invalid VillaId!");
                     return BadRequest(ModelState);
                 }
 

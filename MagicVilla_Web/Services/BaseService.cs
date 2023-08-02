@@ -10,7 +10,7 @@ namespace MagicVilla_Web.Services
     public class BaseService : IBaseService
     {
         public APIResponse responseModel { get; set; }
-        private IHttpClientFactory _httpClient; 
+        private IHttpClientFactory _httpClient;
         public BaseService(IHttpClientFactory httpClient)
         {
             responseModel = new();
@@ -19,7 +19,8 @@ namespace MagicVilla_Web.Services
         }
         public async Task<T> SendAsync<T>(APIRequest apiRequest)
         {
-            try {
+            try
+            {
                 var client = _httpClient.CreateClient("MagicAPI");
 
                 HttpRequestMessage message = new();
@@ -55,17 +56,35 @@ namespace MagicVilla_Web.Services
 
                 var apiContent = await apiResponse.Content.ReadAsStringAsync();
 
+                try
+                {
+                    var response = JsonConvert.DeserializeObject<APIResponse>(apiContent);
+                    if (response.ErrorMessages?.Count > 0 || response.StatusCode == System.Net.HttpStatusCode.BadRequest ||
+                        response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                    {
+                        response.StatusCode = System.Net.HttpStatusCode.BadRequest;
+                        response.IsSuccess = false;
+                        var serializeResponse = JsonConvert.SerializeObject(response);
+                        return JsonConvert.DeserializeObject<T>(serializeResponse);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return JsonConvert.DeserializeObject<T>(apiContent);
+                }
+
                 return JsonConvert.DeserializeObject<T>(apiContent);
             }
 
-            catch(Exception ex) {
+            catch (Exception ex)
+            {
 
                 var dto = new APIResponse()
                 {
                     ErrorMessages = new List<string> { ex.Message },
                     IsSuccess = false
                 };
-                var res=JsonConvert.SerializeObject(dto);   
+                var res = JsonConvert.SerializeObject(dto);
                 return JsonConvert.DeserializeObject<T>(res);
 
             }
