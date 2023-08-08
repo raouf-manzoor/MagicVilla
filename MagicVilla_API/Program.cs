@@ -2,8 +2,11 @@ using MagicVilla_API;
 using MagicVilla_API.Data;
 using MagicVilla_API.Repository;
 using MagicVilla_API.Repository.IRepository;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Serilog;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +34,27 @@ builder.Services.AddAutoMapper(typeof(MappingConfig));
 // Replaced them with extention method
 builder.RegisterDependencies();
 
+// Add new extention method for configuration of JWT 
+builder.JWTConfiguration();
+
+//builder.Services.AddAuthentication(options =>
+//{
+//    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+//    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+//})
+//    .AddJwtBearer(x => {
+//        x.RequireHttpsMetadata = false;
+//        x.SaveToken = true;
+//        x.TokenValidationParameters = new()
+//        {
+//            ValidateIssuerSigningKey = true,
+//            IssuerSigningKey=new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration.GetJWTSecret())),
+//            ValidateIssuer = false,  
+//            ValidateAudience = false,    
+
+//        };
+//    });
+
 builder.Services.AddControllers(
     //option=>option.ReturnHttpNotAcceptable=true
     )
@@ -53,6 +77,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+// UseAuthentication must come before UseAuthorization
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

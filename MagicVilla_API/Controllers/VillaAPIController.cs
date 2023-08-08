@@ -3,6 +3,7 @@ using MagicVilla_API.Data;
 using MagicVilla_API.Models;
 using MagicVilla_API.Models.Dto;
 using MagicVilla_API.Repository.IRepository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -17,22 +18,31 @@ namespace MagicVilla_API.Controllers
     [ApiController]
     public class VillaAPIController : ControllerBase
     {
+        #region Fields
+
         private readonly ILogger<VillaAPIController> _logger;
         private readonly IMapper _mapper;
         private readonly IVillaRepository _villaRepository;
         protected APIResponse _response;
 
+        #endregion
+
+        #region Ctor
         public VillaAPIController(ILogger<VillaAPIController> logger
-            , IMapper mapper, IVillaRepository villaRepository
-            )
+          , IMapper mapper, IVillaRepository villaRepository
+          )
         {
             _logger = logger;
             _mapper = mapper;
             _villaRepository = villaRepository;
             _response = new();
         }
+        #endregion
+
+        #region GetVillas
 
         [HttpGet]
+        [Authorize(Roles = "admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<APIResponse>> GetVillas()
         {
@@ -56,6 +66,9 @@ namespace MagicVilla_API.Controllers
                 return _response;
             }
         }
+        #endregion
+
+
 
         [HttpGet("{id:int}", Name = "GetVilla")]
         [ProducesResponseType(StatusCodes.Status200OK)]

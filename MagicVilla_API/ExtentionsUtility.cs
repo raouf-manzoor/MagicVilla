@@ -1,6 +1,8 @@
 ﻿using MagicVilla_API.Repository.IRepository;
 using MagicVilla_API.Repository;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.Text;
 
 namespace MagicVilla_API
 {
@@ -13,6 +15,30 @@ namespace MagicVilla_API
             builder.Services.AddScoped<IVillaNumberRepository, VillaNumberRepository>();
 
             builder.Services.AddScoped<IUserRepository, UserRepository>();
+        }
+
+        public static void JWTConfiguration(
+            this WebApplicationBuilder builder)
+        {
+            var authenticationBuilder = builder.Services.AddAuthentication(options =>
+             {
+                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+             });
+
+            authenticationBuilder.AddJwtBearer(x =>
+          {
+              x.RequireHttpsMetadata = false;
+              x.SaveToken = true;
+              x.TokenValidationParameters = new()
+              {
+                  ValidateIssuerSigningKey = true,
+                  IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration.GetJWTSecret())),
+                  ValidateIssuer = false,
+                  ValidateAudience = false,
+
+              };
+          });
         }
 
         public static string GetJWTSecret(this IConfiguration configuration)
