@@ -76,8 +76,6 @@ namespace MagicVilla_API.Repository
             };
 
             return response;
-
-            throw new NotImplementedException();
         }
         #endregion
 
