@@ -3,24 +3,37 @@ using MagicVilla_Web.Models;
 using MagicVilla_Web.Services.IServices;
 using Newtonsoft.Json;
 using System;
+using System.Net.Http.Headers;
+using System.Reflection;
 using System.Text;
 
 namespace MagicVilla_Web.Services
 {
     public class BaseService : IBaseService
     {
+        #region Fields
         public APIResponse responseModel { get; set; }
         private IHttpClientFactory _httpClient;
-        public BaseService(IHttpClientFactory httpClient)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        #endregion
+
+        #region Ctor
+        public BaseService(IHttpClientFactory httpClient, IHttpContextAccessor httpContextAccessor)
         {
             responseModel = new();
             _httpClient = httpClient;
-
+            _httpContextAccessor = httpContextAccessor;
         }
+        
+        #endregion
+
+        #region Send web request
         public async Task<T> SendAsync<T>(APIRequest apiRequest)
         {
             try
             {
+                string token = _httpContextAccessor.HttpContext.Session.GetString(SD.SessionToken);
+
                 var client = _httpClient.CreateClient("MagicAPI");
 
                 HttpRequestMessage message = new();
@@ -52,6 +65,14 @@ namespace MagicVilla_Web.Services
 
                 HttpResponseMessage apiResponse = null;
 
+                // Adding token for api authorization check
+                // Adding a Bearer token
+
+                if (!string.IsNullOrEmpty(token))
+                {
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                }
+
                 apiResponse = await client.SendAsync(message);
 
                 var apiContent = await apiResponse.Content.ReadAsStringAsync();
@@ -78,7 +99,7 @@ namespace MagicVilla_Web.Services
 
             catch (Exception ex)
             {
-
+               
                 var dto = new APIResponse()
                 {
                     ErrorMessages = new List<string> { ex.Message },
@@ -89,5 +110,7 @@ namespace MagicVilla_Web.Services
 
             }
         }
+        #endregion
+
     }
 }
