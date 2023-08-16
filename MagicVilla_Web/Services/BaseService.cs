@@ -14,17 +14,17 @@ namespace MagicVilla_Web.Services
         #region Fields
         public APIResponse responseModel { get; set; }
         private IHttpClientFactory _httpClient;
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly ICurrentUserService _currentUserService;
         #endregion
 
         #region Ctor
-        public BaseService(IHttpClientFactory httpClient, IHttpContextAccessor httpContextAccessor)
+        public BaseService(IHttpClientFactory httpClient, ICurrentUserService currentUserService)
         {
             responseModel = new();
             _httpClient = httpClient;
-            _httpContextAccessor = httpContextAccessor;
+            _currentUserService = currentUserService;
         }
-        
+
         #endregion
 
         #region Send web request
@@ -32,7 +32,6 @@ namespace MagicVilla_Web.Services
         {
             try
             {
-                string token = _httpContextAccessor.HttpContext.Session.GetString(SD.SessionToken);
 
                 var client = _httpClient.CreateClient("MagicAPI");
 
@@ -68,9 +67,9 @@ namespace MagicVilla_Web.Services
                 // Adding token for api authorization check
                 // Adding a Bearer token
 
-                if (!string.IsNullOrEmpty(token))
+                if (_currentUserService.IsLoggedIn())
                 {
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _currentUserService.Token);
                 }
 
                 apiResponse = await client.SendAsync(message);
@@ -99,7 +98,7 @@ namespace MagicVilla_Web.Services
 
             catch (Exception ex)
             {
-               
+
                 var dto = new APIResponse()
                 {
                     ErrorMessages = new List<string> { ex.Message },

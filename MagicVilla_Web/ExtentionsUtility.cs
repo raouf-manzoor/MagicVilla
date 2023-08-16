@@ -18,6 +18,8 @@ namespace MagicVilla_API
             builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             builder.Services.AddHttpClient<IAuthService, AuthService>();
             builder.Services.AddScoped<IAuthService, AuthService>();
+
+            builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
         }
 
         public static void ConfigureAuthenticationSettings(

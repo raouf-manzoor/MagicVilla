@@ -14,7 +14,7 @@ namespace MagicVilla_Web.Services
         #endregion
 
         #region Ctor
-        public AuthService(IHttpClientFactory clientFactory, IConfiguration configuration, IHttpContextAccessor httpContextAccessor) : base(clientFactory, httpContextAccessor)
+        public AuthService(IHttpClientFactory clientFactory, IConfiguration configuration, ICurrentUserService currentUserService) : base(clientFactory, currentUserService)
         {
             _clientFactory = clientFactory;
             _apiURL = configuration.GetAPIUrl();

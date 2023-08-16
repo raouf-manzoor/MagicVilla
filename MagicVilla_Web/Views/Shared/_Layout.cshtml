@@ -1,5 +1,6 @@
 ﻿@using MagicVilla_Utility
-@inject Microsoft.AspNetCore.Http.IHttpContextAccessor httpAcc
+@using MagicVilla_Web.Services.IServices;
+@inject ICurrentUserService _currentUser
 
 <!DOCTYPE html>
 <html lang="en">
@@ -38,8 +39,7 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="VillaNumber" asp-action="Index">Villa Number List</a>
                         </li>
 
-                        @if (httpAcc.HttpContext.Session.GetString(SD.SessionToken) != null &&
-                        httpAcc.HttpContext.Session.GetString(SD.SessionToken).ToString().Length > 0)
+                        @if (_currentUser.IsLoggedIn())
                         {
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-controller="Auth" asp-action="Logout">Logout</a>

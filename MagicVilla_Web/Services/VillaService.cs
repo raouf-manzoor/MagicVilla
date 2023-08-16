@@ -9,7 +9,7 @@ namespace MagicVilla_Web.Services
     {
         private readonly IHttpClientFactory _clientFactory;
         private readonly string _villaUrl;
-        public VillaService(IHttpClientFactory clientFactory, IHttpContextAccessor httpContextAccessor, IConfiguration configuration) : base(clientFactory, httpContextAccessor)
+        public VillaService(IHttpClientFactory clientFactory, ICurrentUserService currentUserService, IConfiguration configuration) : base(clientFactory, currentUserService)
         {
             _clientFactory = clientFactory;
             _villaUrl = configuration.GetValue<string>("ServiceUrls:VillaAPI");
