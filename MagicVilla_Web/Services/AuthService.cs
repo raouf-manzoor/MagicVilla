@@ -11,13 +11,15 @@ namespace MagicVilla_Web.Services
         #region Fields
         private readonly IHttpClientFactory _clientFactory;
         private readonly string _apiURL;
+        private readonly string _version;    
         #endregion
 
         #region Ctor
         public AuthService(IHttpClientFactory clientFactory, IConfiguration configuration, ICurrentUserService currentUserService) : base(clientFactory, currentUserService)
         {
+            _version = "v1";
             _clientFactory = clientFactory;
-            _apiURL = configuration.GetAPIUrl();
+            _apiURL = $"{configuration.GetAPIUrl()}/api/{_version}/UsersAuthAPI";
         }
         #endregion
 
@@ -28,7 +30,7 @@ namespace MagicVilla_Web.Services
             {
                 APIType = SD.APIType.POST,
                 Data = obj,
-                Url = $"{_apiURL}/api/UsersAuthAPI/login"
+                Url = $"{_apiURL}/login"
             });
         }
         #endregion
@@ -40,7 +42,7 @@ namespace MagicVilla_Web.Services
             {
                 APIType = SD.APIType.POST,
                 Data = obj,
-                Url = $"{_apiURL}/api/UsersAuthAPI/Register"
+                Url = $"{_apiURL}/Register"
             });
         }
         #endregion

@@ -7,23 +7,23 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
-namespace MagicVilla_API.Controllers
+namespace MagicVilla_API.Controllers.v1
 {
     //[Route("api/[controller]")] In that case, Controller Name will automatically populated. 
     // We will avoid that approach, In case of change in controller name. we have to update all
     // the client apps which are consuming that endpoint
-    [Route("api/VillaNumberAPI")]
+    [Route("api/v{version:apiVersion}/VillaNumberAPI")]
     [ApiController]
-    public class VillaNumberAPIController : ControllerBase
+    public class VillaNumberv1APIController : ControllerBase
     {
-        private readonly ILogger<VillaNumberAPIController> _logger;
+        private readonly ILogger<VillaNumberv1APIController> _logger;
         private readonly IMapper _mapper;
         private readonly IVillaNumberRepository _villaNumberRepository;
         private readonly IVillaRepository _villaRepository;
         protected APIResponse _response;
 
-        public VillaNumberAPIController(ILogger<VillaNumberAPIController> logger
-            , IMapper mapper, 
+        public VillaNumberv1APIController(ILogger<VillaNumberv1APIController> logger
+            , IMapper mapper,
             IVillaNumberRepository villaNumberRepository,
             IVillaRepository villaRepository
             )
@@ -44,7 +44,7 @@ namespace MagicVilla_API.Controllers
 
                 _logger.LogInformation("Getting all villas");
 
-                var villasList = await _villaNumberRepository.GetAllAsync(includeProperties:"Villa");
+                var villasList = await _villaNumberRepository.GetAllAsync(includeProperties: "Villa");
 
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.IsSuccess = true;

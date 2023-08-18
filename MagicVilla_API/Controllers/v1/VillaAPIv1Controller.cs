@@ -9,18 +9,23 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
 
-namespace MagicVilla_API.Controllers
+namespace MagicVilla_API.Controllers.v1
 {
     //[Route("api/[controller]")] In that case, Controller Name will automatically populated. 
     // We will avoid that approach, In case of change in controller name. we have to update all
     // the client apps which are consuming that endpoint
-    [Route("api/VillaAPI")]
+
+    // [MapToApiVersion("2.0")] this attribute is used to sepcify version number at method level
+
+    [Route("api/v{version:apiVersion}/VillaAPI")]
+    [ApiVersion("1.0")]
+    //[ApiVersion("1.0",Deprecated =true)] // States that this control version is deprecated and no longer maintained
     [ApiController]
-    public class VillaAPIController : ControllerBase
+    public class VillaAPIv1Controller : ControllerBase
     {
         #region Fields
 
-        private readonly ILogger<VillaAPIController> _logger;
+        private readonly ILogger<VillaAPIv1Controller> _logger;
         private readonly IMapper _mapper;
         private readonly IVillaRepository _villaRepository;
         protected APIResponse _response;
@@ -28,7 +33,7 @@ namespace MagicVilla_API.Controllers
         #endregion
 
         #region Ctor
-        public VillaAPIController(ILogger<VillaAPIController> logger
+        public VillaAPIv1Controller(ILogger<VillaAPIv1Controller> logger
           , IMapper mapper, IVillaRepository villaRepository
           )
         {
@@ -42,7 +47,6 @@ namespace MagicVilla_API.Controllers
         #region GetVillas
 
         [HttpGet]
-        
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<APIResponse>> GetVillas()
         {
@@ -66,6 +70,8 @@ namespace MagicVilla_API.Controllers
                 return _response;
             }
         }
+
+
         #endregion
 
 
@@ -74,6 +80,7 @@ namespace MagicVilla_API.Controllers
         [Authorize(Roles = "admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<APIResponse>> GetVilla(int id)
         {
@@ -110,6 +117,8 @@ namespace MagicVilla_API.Controllers
         [Authorize(Roles = "admin")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+
         public async Task<ActionResult<APIResponse>> CreateVilla([FromBody] VillaCreateDTO villaCreateDTO)
         {
             try
@@ -171,6 +180,8 @@ namespace MagicVilla_API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+
         public async Task<ActionResult<APIResponse>> DeleteVilla(int id)
         {
             try
@@ -208,6 +219,8 @@ namespace MagicVilla_API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+
         public async Task<ActionResult<APIResponse>> UpdateVilla(int id, [FromBody] VillaUpdateDTO villaUpdateDTO)
         {
             try

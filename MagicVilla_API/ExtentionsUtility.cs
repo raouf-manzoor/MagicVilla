@@ -45,7 +45,8 @@ namespace MagicVilla_API
         public static void SwaggerConfiguration(
             this WebApplicationBuilder builder)
         {
-            builder.Services.AddSwaggerGen(options => {
+            builder.Services.AddSwaggerGen(options =>
+            {
                 options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     Description =
@@ -73,6 +74,57 @@ namespace MagicVilla_API
             new List<string>()
         }
     });
+
+                // Adding this configuration to customize the swagger document UI
+
+                // Version 1 UI config
+                options.SwaggerDoc("v1", new OpenApiInfo()
+                {
+                    Version = "v1",
+                    Title = "Villa API",
+                    Description = "Management of Villas",
+                    TermsOfService = new Uri("https://termsOfServices.testAPI.com"),
+
+                    Contact = new OpenApiContact
+                    {
+                        Name = "ContactUs",
+                        Url = new Uri("https://contactus.testAPI.com"),
+                    },
+
+                    License = new OpenApiLicense
+                    {
+                        Name = "APi License",
+                        Url = new Uri("https://apiLicense.testAPI.com"),
+                    }
+
+
+
+                });
+
+                // Version 2 UI config
+                options.SwaggerDoc("v2", new OpenApiInfo()
+                {
+                    Version = "v2",
+                    Title = "Villa API 2",
+                    Description = "Management of Villas",
+                    TermsOfService = new Uri("https://termsOfServices.testAPI.com"),
+
+                    Contact = new OpenApiContact
+                    {
+                        Name = "ContactUs",
+                        Url = new Uri("https://contactus.testAPI.com"),
+                    },
+
+                    License = new OpenApiLicense
+                    {
+                        Name = "APi License",
+                        Url = new Uri("https://apiLicense.testAPI.com"),
+                    }
+
+
+
+                });
+
             });
         }
 

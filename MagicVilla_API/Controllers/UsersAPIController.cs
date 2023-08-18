@@ -9,7 +9,8 @@ namespace MagicVilla_API.Controllers
     //[Route("api/[controller]")] In that case, Controller Name will automatically populated. 
     // We will avoid that approach, In case of change in controller name. we have to update all
     // the client apps which are consuming that endpoint
-    [Route("api/UsersAuthAPI")]
+    [Route("api/v{version:apiVersion}/UsersAuthAPI")]
+    [ApiVersionNeutral] // States that it will remain constant across all the versions
     [ApiController]
     public class UsersAPIController : Controller
     {

@@ -1,7 +1,9 @@
-﻿using MagicVilla_Utility;
+﻿using MagicVilla_API;
+using MagicVilla_Utility;
 using MagicVilla_Web.Models;
 using MagicVilla_Web.Models.Dto;
 using MagicVilla_Web.Services.IServices;
+using System;
 
 namespace MagicVilla_Web.Services
 {
@@ -9,10 +11,12 @@ namespace MagicVilla_Web.Services
     {
         private readonly IHttpClientFactory _clientFactory;
         private readonly string _villaUrl;
+        private readonly string _version;
         public VillaNumberService(IHttpClientFactory clientFactory, IConfiguration configuration,ICurrentUserService currentUserService) : base(clientFactory, currentUserService)
         {
+            _version = "v1";
             _clientFactory = clientFactory;
-            _villaUrl = configuration.GetValue<string>("ServiceUrls:VillaAPI");
+            _villaUrl = $"{configuration.GetAPIUrl()}/api/{_version}/VillaNumberAPI";
         }
 
         public async Task<T> CreateAsync<T>(VillaNumberCreateDTO dto)
@@ -21,7 +25,7 @@ namespace MagicVilla_Web.Services
             {
                 APIType = SD.APIType.POST,
                 Data = dto,
-                Url = $"{_villaUrl}/api/VillaNumberAPI"
+                Url = $"{_villaUrl}"
             });
         }
 
@@ -30,7 +34,7 @@ namespace MagicVilla_Web.Services
             return await SendAsync<T>(new APIRequest()
             {
                 APIType = SD.APIType.DELETE,
-                Url = $"{_villaUrl}/api/VillaNumberAPI/{id}"
+                Url = $"{_villaUrl}/{id}"
             });
         }
 
@@ -39,7 +43,7 @@ namespace MagicVilla_Web.Services
             return await SendAsync<T>(new APIRequest()
             {
                 APIType = SD.APIType.GET,
-                Url = $"{_villaUrl}/api/VillaNumberAPI"
+                Url = $"{_villaUrl}"
             });
         }
 
@@ -48,7 +52,7 @@ namespace MagicVilla_Web.Services
             return await SendAsync<T>(new APIRequest()
             {
                 APIType = SD.APIType.GET,
-                Url = $"{_villaUrl}/api/VillaNumberAPI/{id}"
+                Url = $"{_villaUrl}/{id}"
             });
         }
 
@@ -58,7 +62,7 @@ namespace MagicVilla_Web.Services
             {
                 APIType = SD.APIType.PUT,
                 Data = dto,
-                Url = $"{_villaUrl}/api/VillaNumberAPI/{dto.VillaNo}"
+                Url = $"{_villaUrl}/{dto.VillaNo}"
             });
         }
     }
