@@ -35,26 +35,28 @@ builder.RegisterDependencies();
 
 // Add Api Versioning
 
-builder.Services.AddApiVersioning(options =>
-{
-    // In case if no version is supplied by the client. Setting up true to avoid exception
-    options.AssumeDefaultVersionWhenUnspecified = true;
+//builder.Services.AddApiVersioning(options =>
+//{
+//    // In case if no version is supplied by the client. Setting up true to avoid exception
+//    options.AssumeDefaultVersionWhenUnspecified = true;
 
-    // Setting up Major and minor versions
-    options.DefaultApiVersion = new ApiVersion(1, 0);
+//    // Setting up Major and minor versions
+//    options.DefaultApiVersion = new ApiVersion(1, 0);
 
-    // This will add supported Api versions in the response object
-    options.ReportApiVersions = true;
-});
+//    // This will add supported Api versions in the response object
+//    options.ReportApiVersions = true;
+//});
 
-builder.Services.AddVersionedApiExplorer(options =>
-{
-    options.GroupNameFormat = "'v'VVV";
+//builder.Services.AddVersionedApiExplorer(options =>
+//{
+//    options.GroupNameFormat = "'v'VVV";
 
-    // Instead of passing version manually we will set this flag to true to automatically substitue the version number
+//    // Instead of passing version manually we will set this flag to true to automatically substitue the version number
 
-    options.SubstituteApiVersionInUrl = true;
-});
+//    options.SubstituteApiVersionInUrl = true;
+//});
+
+builder.AddApiVersionSupport();
 
 // Add new extention method for configuration of JWT 
 builder.JWTConfiguration();

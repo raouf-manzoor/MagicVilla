@@ -4,11 +4,13 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace MagicVilla_API
 {
     public static class ExtentionsUtility
     {
+        // Registering all the services with respective interfaces
         public static void RegisterDependencies(
             this WebApplicationBuilder builder)
         {
@@ -18,6 +20,7 @@ namespace MagicVilla_API
             builder.Services.AddScoped<IUserRepository, UserRepository>();
         }
 
+        // Configuring Authentication and JWT setup.
         public static void JWTConfiguration(
             this WebApplicationBuilder builder)
         {
@@ -42,6 +45,7 @@ namespace MagicVilla_API
           });
         }
 
+        // Configuring customized Swagger UI.
         public static void SwaggerConfiguration(
             this WebApplicationBuilder builder)
         {
@@ -125,6 +129,33 @@ namespace MagicVilla_API
 
                 });
 
+            });
+        }
+
+        // Configuring Version settings to allow multiple versions
+
+        public static void AddApiVersionSupport(
+            this WebApplicationBuilder builder)
+        {
+            builder.Services.AddApiVersioning(options =>
+            {
+                // In case if no version is supplied by the client. Setting up true to avoid exception
+                options.AssumeDefaultVersionWhenUnspecified = true;
+
+                // Setting up Major and minor versions
+                options.DefaultApiVersion = new ApiVersion(1, 0);
+
+                // This will add supported Api versions in the response object
+                options.ReportApiVersions = true;
+            });
+
+            builder.Services.AddVersionedApiExplorer(options =>
+            {
+                options.GroupNameFormat = "'v'VVV";
+
+                // Instead of passing version manually we will set this flag to true to automatically substitue the version number
+
+                options.SubstituteApiVersionInUrl = true;
             });
         }
 
