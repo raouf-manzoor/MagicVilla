@@ -47,6 +47,11 @@ namespace MagicVilla_API.Controllers.v1
         #region GetVillas
 
         [HttpGet]
+        //[ResponseCache(Duration = 30)] // This will cache response for 30 seconds
+        
+        // this will use the cache profile that we have 
+        // configured in settings
+        [ResponseCache(CacheProfileName = "Default30")] 
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<APIResponse>> GetVillas()
         {
@@ -82,6 +87,7 @@ namespace MagicVilla_API.Controllers.v1
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        //[ResponseCache(NoStore =true,Location =ResponseCacheLocation.None)] In this case response will not be cached, if we have this parameters in response cache attribute
         public async Task<ActionResult<APIResponse>> GetVilla(int id)
         {
             try

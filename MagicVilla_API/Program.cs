@@ -28,6 +28,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(option =>
     option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultSQLConnection"));
 });
 
+// Configuring response caching.
+
+builder.Services.AddResponseCaching();
+
 builder.Services.AddAutoMapper(typeof(MappingConfig));
 
 // Replaced them with extention method
@@ -63,6 +67,16 @@ builder.JWTConfiguration();
 
 builder.Services.AddControllers(
     //option=>option.ReturnHttpNotAcceptable=true
+
+    // Configuring caching profile.
+    option => {
+
+        option.CacheProfiles.Add("Default30", new CacheProfile()
+        {
+            Duration = 30
+        }); ;
+    }
+
     )
     .AddNewtonsoftJson()
     .AddXmlDataContractSerializerFormatters();
