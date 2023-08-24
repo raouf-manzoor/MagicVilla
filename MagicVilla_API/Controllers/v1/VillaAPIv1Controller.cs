@@ -53,14 +53,32 @@ namespace MagicVilla_API.Controllers.v1
         // configured in settings
         [ResponseCache(CacheProfileName = "Default30")] 
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<APIResponse>> GetVillas()
+        
+        public async Task<ActionResult<APIResponse>> GetVillas([FromQuery(Name ="occupancyFilter")] int? occupancy,
+         [FromQuery] string? searchKey)
         {
             try
             {
 
                 _logger.LogInformation("Getting all villas");
 
-                var villasList = await _villaRepository.GetAllAsync();
+                IEnumerable<Villa> villasList = await _villaRepository.GetAllAsync();
+
+                if(occupancy > 0 )
+                {
+                    villasList = await _villaRepository.GetAllAsync(e=>e.Occupancy>occupancy);
+                }
+                else
+                {
+                    villasList = await _villaRepository.GetAllAsync();
+                }
+
+                if(!searchKey.IsNullOrEmpty())
+                {
+                    // Using OrdinalIgnorecase to avoid case sensitve match
+                    
+                    villasList = villasList.Where(e => e.Name.Contains(searchKey, StringComparison.OrdinalIgnoreCase));
+                }
 
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.IsSuccess = true;
