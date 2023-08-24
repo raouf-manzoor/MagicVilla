@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System.Net;
 
 namespace MagicVilla_API.Controllers.v1
@@ -84,6 +85,9 @@ namespace MagicVilla_API.Controllers.v1
                 _response.IsSuccess = true;
                 _response.Result = _mapper.Map<List<VillaDTO>>(villasList);
 
+                // Adding pagination info in response header
+                Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(new { PageNumber=1,PageSize=3}));
+
                 return Ok(_response);
             }
             catch (Exception ex)
@@ -120,7 +124,10 @@ namespace MagicVilla_API.Controllers.v1
 
                 if (villa == null)
                 {
-                    return NotFound();
+                    _response.StatusCode = HttpStatusCode.NotFound;
+                    _response.IsSuccess = false;
+                    _response.ErrorMessages.Add("Villa not found");
+                    return NotFound(_response);
                 }
 
                 _response.StatusCode = HttpStatusCode.OK;

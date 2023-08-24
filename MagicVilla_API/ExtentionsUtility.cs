@@ -168,5 +168,10 @@ namespace MagicVilla_API
         {
             return string.IsNullOrEmpty(value);
         }
+
+        public static IQueryable<T> PageBy<T>(this IQueryable<T> query, int pageSize, int pageNumber)
+        {
+            return query.Skip((pageNumber-1)*pageSize).Take(pageSize);
+        }
     }
 }
