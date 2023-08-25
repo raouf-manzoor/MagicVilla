@@ -60,10 +60,10 @@ builder.RegisterDependencies();
 //    options.SubstituteApiVersionInUrl = true;
 //});
 
-builder.AddApiVersionSupport();
+builder.ConfigureApiVersionSupport();
 
 // Add new extention method for configuration of JWT 
-builder.JWTConfiguration();
+builder.ConfigureJwtAuthentication();
 
 builder.Services.AddControllers(
     //option=>option.ReturnHttpNotAcceptable=true
@@ -84,7 +84,7 @@ builder.Services.AddControllers(
 builder.Services.AddEndpointsApiExplorer();
 
 // Add new extention method for configuration of Swagger
-builder.SwaggerConfiguration();
+builder.ConfigureSwagger();
 
 
 var app = builder.Build();
