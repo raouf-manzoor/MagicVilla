@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using MagicVilla_API.Data;
+using MagicVilla_API.Extentions;
 using MagicVilla_API.Models;
 using MagicVilla_API.Models.Dto;
 using MagicVilla_API.Repository.IRepository;
@@ -25,7 +26,7 @@ namespace MagicVilla_API.Repository
         {
             _db = db;
             _mapper = mapper;
-            _secretKey = configuration.GetJWTSecret();
+            _secretKey = configuration.RetrieveJwtSecret();
         }
         #endregion
 

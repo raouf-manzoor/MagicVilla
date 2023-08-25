@@ -1,4 +1,5 @@
-﻿using MagicVilla_API.Models;
+﻿using MagicVilla_API.Extentions;
+using MagicVilla_API.Models;
 using MagicVilla_API.Models.Dto;
 using MagicVilla_API.Repository.IRepository;
 using Microsoft.AspNetCore.Mvc;

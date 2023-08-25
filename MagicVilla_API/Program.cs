@@ -1,5 +1,6 @@
 using MagicVilla_API;
 using MagicVilla_API.Data;
+using MagicVilla_API.Extentions;
 using MagicVilla_API.Repository;
 using MagicVilla_API.Repository.IRepository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
