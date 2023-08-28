@@ -1,21 +1,18 @@
 using MagicVilla_API;
 using MagicVilla_API.Data;
 using MagicVilla_API.Extentions;
-using MagicVilla_API.Repository;
-using MagicVilla_API.Repository.IRepository;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
-using Serilog;
-using System.Text;
 
+// Create the web application builder
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-// Serilog Logger Configuration
+// Set up Serilog Logger Configuration
+// Define and configure the Serilog logger for application logging.
+// Minimum log level is set to Debug.
+// Log entries are written to "log/villaLogs.txt" file, with daily rolling interval.
 
 //Log.Logger=new LoggerConfiguration()
 //    .MinimumLevel.Debug()
@@ -24,75 +21,77 @@ var builder = WebApplication.CreateBuilder(args);
 
 //builder.Host.UseSerilog();
 
+// Set up DbContext for Entity Framework
 builder.Services.AddDbContext<ApplicationDbContext>(option =>
 {
+    // Configure the DbContext to use a SQL Server database.
+    // Connection string is retrieved from configuration.
     option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultSQLConnection"));
 });
 
-// Configuring response caching.
-
+// Configure response caching
 builder.Services.AddResponseCaching();
+// Enable caching of API responses to improve performance.
 
+// Configure AutoMapper
 builder.Services.AddAutoMapper(typeof(MappingConfig));
+// Set up AutoMapper to handle object mapping based on MappingConfig class.
 
-// Replaced them with extention method
+
+// Register application dependencies
+// Use a custom extension method to register various dependencies in the container.
+// This method registers services based on interfaces and implementations.
 builder.RegisterDependencies();
 
-// Add Api Versioning
-
-//builder.Services.AddApiVersioning(options =>
-//{
-//    // In case if no version is supplied by the client. Setting up true to avoid exception
-//    options.AssumeDefaultVersionWhenUnspecified = true;
-
-//    // Setting up Major and minor versions
-//    options.DefaultApiVersion = new ApiVersion(1, 0);
-
-//    // This will add supported Api versions in the response object
-//    options.ReportApiVersions = true;
-//});
-
-//builder.Services.AddVersionedApiExplorer(options =>
-//{
-//    options.GroupNameFormat = "'v'VVV";
-
-//    // Instead of passing version manually we will set this flag to true to automatically substitue the version number
-
-//    options.SubstituteApiVersionInUrl = true;
-//});
-
+// Configure API version support
 builder.ConfigureApiVersionSupport();
+// Set up API versioning in the application
+// This involves supported API versions and their behavior.
 
-// Add new extention method for configuration of JWT 
+// Configure JWT authentication
 builder.ConfigureJwtAuthentication();
+// Set up JSON Web Token (JWT) authentication for API security.
+// This method configures authentication schemes, options, and related settings.
 
+// Add controllers to the service collection
 builder.Services.AddControllers(
     //option=>option.ReturnHttpNotAcceptable=true
 
-    // Configuring caching profile.
+    // Configure caching profile.
     option => {
 
+        // Configure a caching profile named "Default30".
+        // API responses with this cache profile will be cached for 30 seconds.
         option.CacheProfiles.Add("Default30", new CacheProfile()
         {
             Duration = 30
-        }); ;
+        });
     }
 
     )
     .AddNewtonsoftJson()
     .AddXmlDataContractSerializerFormatters();
+// Configure and add controllers to the application.
+// Support both JSON and XML serialization formats.
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+// Configure API endpoint documentation using Swagger
 builder.Services.AddEndpointsApiExplorer();
 
-// Add new extention method for configuration of Swagger
+// Configure Swagger
 builder.ConfigureSwagger();
+// Set up Swagger/OpenAPI documentation for the API.
+// This involves specifying endpoints and version-specific information.
 
-
+// Build the application
 var app = builder.Build();
+// Complete building the web application.
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    // Enable Swagger UI for development environment
     app.UseSwagger();
 
     app.UseSwaggerUI(options =>
@@ -109,12 +108,19 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+// Redirect HTTP requests to HTTPS
 app.UseHttpsRedirection();
+// Automatically redirect HTTP requests to their HTTPS counterparts.
 
 // UseAuthentication must come before UseAuthorization
 app.UseAuthentication();
-app.UseAuthorization();
+// Enable authentication middleware.
 
+app.UseAuthorization();
+// Enable authorization middleware.
+
+// Map controllers
 app.MapControllers();
+// Map routes for the controllers.
 
 app.Run();
