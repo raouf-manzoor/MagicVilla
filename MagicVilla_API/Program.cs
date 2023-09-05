@@ -29,6 +29,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(option =>
     option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultSQLConnection"));
 });
 
+builder.ConfigureIdentityServices();
+
 // Configure response caching
 builder.Services.AddResponseCaching();
 // Enable caching of API responses to improve performance.
