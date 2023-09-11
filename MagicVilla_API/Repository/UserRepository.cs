@@ -19,6 +19,7 @@ namespace MagicVilla_API.Repository
         private readonly ApplicationDbContext _db;
         private readonly IMapper _mapper;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly string _secretKey;
 
         #endregion
@@ -27,12 +28,14 @@ namespace MagicVilla_API.Repository
         public UserRepository(ApplicationDbContext db,
             IMapper mapper,
             IConfiguration configuration,
-            UserManager<ApplicationUser> userManager)
+            UserManager<ApplicationUser> userManager,
+            RoleManager<IdentityRole> roleManager)
         {
             _db = db;
             _mapper = mapper;
             _userManager = userManager;
             _secretKey = configuration.RetrieveJwtSecret();
+            _roleManager = roleManager;
         }
         #endregion
 
@@ -51,7 +54,7 @@ namespace MagicVilla_API.Repository
         public async Task<LoginResponseDTO> Login(LoginRequestDTO loginRequestDTO)
         {
             var user = await _db.ApplicationUsers.FirstOrDefaultAsync(e =>
-           e.UserName.ToLower()==loginRequestDTO.UserName.ToLower());   
+           e.UserName.ToLower() == loginRequestDTO.UserName.ToLower());
             //e.UserName.Equals(loginRequestDTO.UserName, StringComparison.OrdinalIgnoreCase)
             //);
 
@@ -92,7 +95,7 @@ namespace MagicVilla_API.Repository
             {
                 Token = tokenHandler.WriteToken(token),
                 User = _mapper.Map<UserDTO>(user),
-                Role=roles.FirstOrDefault()
+                Role = roles.FirstOrDefault()
             };
 
             return response;
@@ -100,15 +103,49 @@ namespace MagicVilla_API.Repository
         #endregion
 
         #region Register
-        public async Task<LocalUser> Register(RegisterationRequestDTO registerationRequestDTO)
+        public async Task<UserDTO> Register(RegisterationRequestDTO registerationRequestDTO)
         {
-            LocalUser userToRegister = _mapper.Map<LocalUser>(registerationRequestDTO);
 
-            await _db.LocalUsers.AddAsync(userToRegister);
-            await _db.SaveChangesAsync();
+            ApplicationUser userToRegister = new()
+            {
+                UserName = registerationRequestDTO.UserName,
+                Email = registerationRequestDTO.UserName,
+                NormalizedEmail = registerationRequestDTO.UserName.ToUpper(),
+                Name = registerationRequestDTO.Name,
+            };
 
-            userToRegister.Password = "";
-            return userToRegister;
+            try
+            {
+                var result = await _userManager
+                    .CreateAsync(userToRegister, registerationRequestDTO.Password);
+
+                if (result.Succeeded)
+                {
+                    // This will add roles in the DB.
+                    // This code should be move in the startup and it should seed 
+                    // the roles it they not exist in the database.
+                    // Currently adding this code here just for testing purpose.
+
+                    var rolesNotExist =!await _roleManager.RoleExistsAsync("admin");
+
+                    if(rolesNotExist)
+                    {
+                       await _roleManager.CreateAsync(new IdentityRole("admin"));
+                       await _roleManager.CreateAsync(new IdentityRole("customer"));
+                    }
+
+                    await _userManager.AddToRoleAsync(userToRegister, "admin");
+
+                    var userToReturn = await _db
+                                     .ApplicationUsers
+                                     .FirstOrDefaultAsync(e => e.UserName == registerationRequestDTO.UserName);
+
+                    return _mapper.Map<UserDTO>(userToReturn);
+                }
+            }
+            catch (Exception ex) { }
+           
+            return new UserDTO();
         }
         #endregion
 
