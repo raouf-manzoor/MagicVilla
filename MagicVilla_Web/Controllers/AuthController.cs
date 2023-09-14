@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Newtonsoft.Json;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
 namespace MagicVilla_Web.Controllers
@@ -34,8 +35,14 @@ namespace MagicVilla_Web.Controllers
         {
             var identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme);
 
-            identity.AddClaim(new Claim(ClaimTypes.Name, loginResponse.User.Name));
-            identity.AddClaim(new Claim(ClaimTypes.Role, loginResponse.User.Role));
+            // We are decrypting the token we receive after login into the system
+            // to extract the required role Info.
+
+            var handler = new JwtSecurityTokenHandler();
+            var jwt = handler.ReadJwtToken(loginResponse.Token);
+
+            identity.AddClaim(new Claim(ClaimTypes.Name, jwt.Claims.FirstOrDefault(u=>u.Type== "unique_name").Value));
+            identity.AddClaim(new Claim(ClaimTypes.Role, jwt.Claims.FirstOrDefault(u => u.Type == "role").Value));
 
             var principal = new ClaimsPrincipal(identity);
 

@@ -6,6 +6,7 @@
 
         public string Token { get; set; }
 
-        public string Role { get; set; }
+        // We don't have to pass role explicitly as we get that info from Token.
+        //public string Role { get; set; }
     }
 }
