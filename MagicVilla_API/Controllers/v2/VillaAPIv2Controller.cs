@@ -29,7 +29,7 @@ namespace MagicVilla_API.Controllers.v2
         [ProducesResponseType(StatusCodes.Status200OK)]
         public string GetTestString()
         {
-            return "Test string from version 2";
+            return "Test string from version 2 with deployment";
         }
 
 
