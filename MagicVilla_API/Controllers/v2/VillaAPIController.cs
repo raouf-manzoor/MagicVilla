@@ -17,6 +17,7 @@ namespace MagicVilla_API.Controllers.v2
     // We will avoid that approach, In case of change in controller name. we have to update all
     // the client apps which are consuming that endpoint
 
+
     // [MapToApiVersion("2.0")] this attribute is used to sepcify version number at method level
 
     [Route("api/v{version:apiVersion}/VillaAPI")]
