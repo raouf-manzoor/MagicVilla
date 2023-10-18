@@ -17,7 +17,7 @@ namespace MagicVilla_Web.Services
         #region Ctor
         public AuthService(IHttpClientFactory clientFactory, IConfiguration configuration, ICurrentUserService currentUserService) : base(clientFactory, currentUserService)
         {
-            _version = "v1";
+            _version = SD.CurrentAPIVersion;
             _clientFactory = clientFactory;
             _apiURL = $"{configuration.GetAPIUrl()}/api/{_version}/UsersAuthAPI";
         }

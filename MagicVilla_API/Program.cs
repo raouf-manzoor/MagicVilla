@@ -60,7 +60,8 @@ builder.Services.AddControllers(
     //option=>option.ReturnHttpNotAcceptable=true
 
     // Configure caching profile.
-    option => {
+    option =>
+    {
 
         // Configure a caching profile named "Default30".
         // API responses with this cache profile will be cached for 30 seconds.
@@ -99,13 +100,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(options =>
     {
         // Configuring swagger UI to make it more dynamic. The default document which will pop up
-
-        // Version 1 configuration
-
-        options.SwaggerEndpoint("/swagger/v1/swagger.json", "Magic_VillaV1");
-
         // Version 2 configuration
         options.SwaggerEndpoint("/swagger/v2/swagger.json", "Magic_VillaV2");
+
+        // Version 1 configuration
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "Magic_VillaV1");
+
+
 
     });
 }

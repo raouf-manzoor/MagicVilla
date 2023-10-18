@@ -14,7 +14,7 @@ namespace MagicVilla_Web.Services
         private readonly string _version;
         public VillaNumberService(IHttpClientFactory clientFactory, IConfiguration configuration,ICurrentUserService currentUserService) : base(clientFactory, currentUserService)
         {
-            _version = "v1";
+            _version = SD.CurrentAPIVersion;
             _clientFactory = clientFactory;
             _villaUrl = $"{configuration.GetAPIUrl()}/api/{_version}/VillaNumberAPI";
         }

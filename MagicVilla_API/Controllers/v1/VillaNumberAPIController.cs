@@ -13,16 +13,17 @@ namespace MagicVilla_API.Controllers.v1
     // We will avoid that approach, In case of change in controller name. we have to update all
     // the client apps which are consuming that endpoint
     [Route("api/v{version:apiVersion}/VillaNumberAPI")]
+    [ApiVersion("1.0")]
     [ApiController]
-    public class VillaNumberv1APIController : ControllerBase
+    public class VillaNumberAPIController : ControllerBase
     {
-        private readonly ILogger<VillaNumberv1APIController> _logger;
+        private readonly ILogger<VillaNumberAPIController> _logger;
         private readonly IMapper _mapper;
         private readonly IVillaNumberRepository _villaNumberRepository;
         private readonly IVillaRepository _villaRepository;
         protected APIResponse _response;
 
-        public VillaNumberv1APIController(ILogger<VillaNumberv1APIController> logger
+        public VillaNumberAPIController(ILogger<VillaNumberAPIController> logger
             , IMapper mapper,
             IVillaNumberRepository villaNumberRepository,
             IVillaRepository villaRepository
