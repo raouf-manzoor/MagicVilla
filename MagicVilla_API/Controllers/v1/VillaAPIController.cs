@@ -23,11 +23,11 @@ namespace MagicVilla_API.Controllers.v1
     [ApiVersion("1.0")]
     //[ApiVersion("1.0",Deprecated =true)] // States that this control version is deprecated and no longer maintained
     [ApiController]
-    public class VillaAPIv1Controller : ControllerBase
+    public class VillaAPIController : ControllerBase
     {
         #region Fields
 
-        private readonly ILogger<VillaAPIv1Controller> _logger;
+        private readonly ILogger<VillaAPIController> _logger;
         private readonly IMapper _mapper;
         private readonly IVillaRepository _villaRepository;
         protected APIResponse _response;
@@ -35,7 +35,7 @@ namespace MagicVilla_API.Controllers.v1
         #endregion
 
         #region Ctor
-        public VillaAPIv1Controller(ILogger<VillaAPIv1Controller> logger
+        public VillaAPIController(ILogger<VillaAPIController> logger
           , IMapper mapper, IVillaRepository villaRepository
           )
         {
