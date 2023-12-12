@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -41,7 +42,7 @@ namespace MagicVilla_Web.Controllers
             var handler = new JwtSecurityTokenHandler();
             var jwt = handler.ReadJwtToken(loginResponse.Token);
 
-            identity.AddClaim(new Claim(ClaimTypes.Name, jwt.Claims.FirstOrDefault(u=>u.Type== "unique_name").Value));
+            identity.AddClaim(new Claim(ClaimTypes.Name, jwt.Claims.FirstOrDefault(u => u.Type == "unique_name").Value));
             identity.AddClaim(new Claim(ClaimTypes.Role, jwt.Claims.FirstOrDefault(u => u.Type == "role").Value));
 
             var principal = new ClaimsPrincipal(identity);
@@ -86,6 +87,14 @@ namespace MagicVilla_Web.Controllers
         [HttpGet]
         public IActionResult Register()
         {
+            var rolesList = new List<SelectListItem>()
+            {
+                new SelectListItem() {Text=SD.Admin,Value=SD.Admin},
+                new SelectListItem() {Text=SD.Customer,Value=SD.Customer}
+            };
+
+            ViewBag.RoleList = rolesList;
+
             return View();
         }
 
@@ -93,11 +102,27 @@ namespace MagicVilla_Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterationRequestDTO registerUserObj)
         {
+            if (string.IsNullOrEmpty(registerUserObj.Role))
+            {
+                registerUserObj.Role=SD.Customer;
+            }
+
             var registerResult = await _authService.RegisterAsync<APIResponse>(registerUserObj);
+           
             if (registerResult != null && registerResult.IsSuccess)
             {
                 return RedirectToAction("Login");
             }
+
+            // To populate roles dropdown if there is any issue while registration.
+
+            var rolesList = new List<SelectListItem>()
+            {
+                new SelectListItem() {Text=SD.Admin,Value=SD.Admin},
+                new SelectListItem() {Text=SD.Customer,Value=SD.Customer}
+            };
+
+            ViewBag.RoleList = rolesList;
 
             return View();
         }

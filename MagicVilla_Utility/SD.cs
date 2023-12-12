@@ -12,5 +12,9 @@
 
         public static readonly string SessionToken = "JWTToken";
         public static readonly string CurrentAPIVersion = "v2";
+
+        public const string Admin = "admin";
+        public const string Customer = "customer";
+
     }
 }
