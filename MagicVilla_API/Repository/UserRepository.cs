@@ -126,15 +126,15 @@ namespace MagicVilla_API.Repository
                     // the roles it they not exist in the database.
                     // Currently adding this code here just for testing purpose.
 
-                    var rolesNotExist = !await _roleManager.RoleExistsAsync("admin");
+                    var rolesNotExist = !await _roleManager.RoleExistsAsync(registerationRequestDTO.Role);
 
                     if (rolesNotExist)
                     {
-                        await _roleManager.CreateAsync(new IdentityRole("admin"));
-                        await _roleManager.CreateAsync(new IdentityRole("customer"));
+                        await _roleManager.CreateAsync(new IdentityRole(registerationRequestDTO.Role));
+                        //await _roleManager.CreateAsync(new IdentityRole("customer"));
                     }
 
-                    await _userManager.AddToRoleAsync(userToRegister, "admin");
+                    await _userManager.AddToRoleAsync(userToRegister, registerationRequestDTO.Role);
 
                     var userToReturn = await _db
                                      .ApplicationUsers
